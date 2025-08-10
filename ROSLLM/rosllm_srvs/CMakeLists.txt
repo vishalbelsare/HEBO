@@ -14,6 +14,7 @@ add_service_files(
   ExecuteBehavior.srv
   AtomicAction.srv
   LLM.srv
+  VLM.srv
   Observation.srv
   GetUserInput.srv
 )
