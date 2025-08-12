@@ -14,8 +14,9 @@ class ObservationManagerNode:
 
     def __init__(self):
         rospy.init_node("observation_manager_node")
-        self.observations_srvs = self.load_observations_service_list()
-        self.observations_topics = self.load_observations_topics_list()
+        self.config = self.load_config()
+        self.observations_srvs = self.config["observations_srvs"]        
+        self.observations_topics = self.config["observations_topics"]
         rospy.Service("get_observation", Observation, self.callback_handler)
 
         self.obs_msgs = {}
@@ -26,17 +27,11 @@ class ObservationManagerNode:
     def observation_callback(self, msg, name):
         self.obs_msgs[name] = Observation(name=name, text=[msg.data])
 
-    def load_observations_service_list(self):
+    def load(self):
         config_filename = rospy.get_param("~config_filename")
         with open(config_filename, "r") as f:
             config = yaml.load(f, Loader=yaml.SafeLoader)
-        return config["observations_srvs"]
-
-    def load_observations_topics_list(self):
-        config_filename = rospy.get_param("~config_filename")
-        with open(config_filename, "r") as f:
-            config = yaml.load(f, Loader=yaml.SafeLoader)
-        return config["observations_topics"]
+        return config
 
     def get_single_observation_srv(self, srv_name: str) -> ObservationResponse:
         obs = []
