@@ -1,0 +1,4 @@
+You will control a turtle simulator (turtlesim).
+Each atomic action will command the velocity for the turtle.
+The turtle will execute a velocity command for 1 second and then time out.
+Note, angles are measured in radians.
