@@ -162,6 +162,8 @@ catkin_install_python(PROGRAMS
   scripts/vlm_node
   scripts/user_interface_browser
   test/test_llm_node  
+  scripts/fake_llm_node
+  scripts/ros_agent_srv
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
