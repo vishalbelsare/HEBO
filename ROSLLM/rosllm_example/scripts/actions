@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+import json
+import rospy
+from geometry_msgs.msg import Twist
+from rosllm_srvs.srv import AtomicAction, AtomicActionResponse
+
+class Actions:
+
+    def __init__(self):
+        self.pub = rospy.Publisher("turtleX/cmd_vel", Twist, queue_size=10)
+        rospy.Service("command", AtomicAction, self.command_handler)
+        rospy.Service("forward", AtomicAction, self.forward)
+        rospy.Service("strafe", AtomicAction, self.strafe)
+        rospy.Service("turn", AtomicAction, self.turn)
+
+    def move(self, fwd_vel, strafe_vel, ang_vel):
+        msg = Twist()
+        msg.linear.x = fwd_vel
+        msg.linear.y = strafe_vel
+        msg.angular.z = ang_vel
+        self.pub.publish(msg)
+        rospy.sleep(1.0)
+
+    def command_handler(self, req):
+        act_input = json.loads(req.input)        
+        self.move(**act_input)        
+        return AtomicActionResponse(success=True)
+    
+    def foward(self, req):
+        vel = json.loads(req.input)['vel']
+        self.move(vel, 0.0, 0.0)
+        return AtomicActionResponse(success=True)
+
+    def strafe(self, req):
+        vel = json.loads(req.input)['vel']
+        self.move(0.0, vel, 0.0)
+        return AtomicActionResponse(success=True)
+
+    def turn(self, req):
+        vel = json.loads(req.input)['vel']
+        self.move(0.0, 0.0, vel)
+        return AtomicActionResponse(success=True)
+
+    def spin(self):
+        rospy.spin()
+
+def main():
+    Actions().spin()
+
+
+if __name__ == '__main__':
+    main()

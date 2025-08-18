@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(agent_comm)
+project(rosllm_example)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -158,12 +158,7 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-  scripts/llm_node
-  scripts/vlm_node
-  scripts/user_interface_browser
-  test/test_llm_node  
-  scripts/fake_llm_node
-  scripts/ros_agent_srv
+  scripts/example
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

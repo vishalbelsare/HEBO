@@ -38,6 +38,38 @@ Then step through the following steps:
   * `pip3 install openai PyYAML gradio whisper`
 9. Build workspace: `catkin build -s`
 
+# Examples
+
+## Test connection to LLM
+
+Start a ROS core.
+```
+roscore
+```
+
+Start the LLM node.
+```
+rosrun agent_comm llm_node ...params...
+```
+
+Execute test.
+```
+rosrun agent_comm test_llm_node
+```
+
+## Turtlesim example
+
+Launch nodes.
+```
+roslaunch rosllm_example example.launch
+```
+
+Run service agent.
+```
+rosrun agent_comm ros_agent_srv ..params..
+```
+
+
 # Support
 
 Currently, only ROS Noetic is supported.
