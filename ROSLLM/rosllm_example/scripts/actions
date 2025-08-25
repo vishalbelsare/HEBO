@@ -7,7 +7,8 @@ from rosllm_srvs.srv import AtomicAction, AtomicActionResponse
 class Actions:
 
     def __init__(self):
-        self.pub = rospy.Publisher("turtleX/cmd_vel", Twist, queue_size=10)
+        rospy.init_node("actions_node")
+        self.pub = rospy.Publisher("turtle1/cmd_vel", Twist, queue_size=10)
         rospy.Service("command", AtomicAction, self.command_handler)
         rospy.Service("forward", AtomicAction, self.forward)
         rospy.Service("strafe", AtomicAction, self.strafe)
@@ -15,9 +16,9 @@ class Actions:
 
     def move(self, fwd_vel, strafe_vel, ang_vel):
         msg = Twist()
-        msg.linear.x = fwd_vel
-        msg.linear.y = strafe_vel
-        msg.angular.z = ang_vel
+        msg.linear.x = float(fwd_vel)
+        msg.linear.y = float(strafe_vel)
+        msg.angular.z = float(ang_vel)
         self.pub.publish(msg)
         rospy.sleep(1.0)
 
@@ -26,7 +27,9 @@ class Actions:
         self.move(**act_input)        
         return AtomicActionResponse(success=True)
     
-    def foward(self, req):
+    def forward(self, req):
+        print("---here---")
+        print(req)
         vel = json.loads(req.input)['vel']
         self.move(vel, 0.0, 0.0)
         return AtomicActionResponse(success=True)
