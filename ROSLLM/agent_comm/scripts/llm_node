@@ -18,7 +18,7 @@ class LLMNode:
         self.llm = LLM(
             model=self.model,
             base_url=rospy.get_param("~base_url"),
-            temperature=rospy.get_param("~temperature"),
+            temperature=rospy.get_param("~temperature", 0.8),
             timeout=rospy.get_param("~timeout", 30.0),  # seconds
             api_key=rospy.get_param("~api_key", "EMPTY"),  # required for GPT
         )
