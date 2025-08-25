@@ -93,8 +93,9 @@ class RosEnv:
         path = Path(rospy.get_param("~atomic_action_library_path"))
         config = yaml.load(path.read_text(), Loader=yaml.SafeLoader)
         atomic_actions = ""
-        for index, (name, descr) in enumerate(config['atomic_actions'].items(), start=1):
-            atomic_actions += f"Atomic action {index}:\nName: {name}\nDescription:\n{descr}\n\n"
+        for index, (name, descr_file) in enumerate(config['atomic_actions'].items(), start=1):
+            descr = (path.parent / descr_file).read_text()
+            atomic_actions += f"# Atomic action {index}:\nName: '{name}'\nDescription:\n{descr}\n\n"
         return atomic_actions
 
     def handle_action(self, action):

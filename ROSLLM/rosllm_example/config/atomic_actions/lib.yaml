@@ -1,0 +1,6 @@
+atomic_actions:
+  command: command.txt
+  forward: forward.txt
+  strafe: strafe.txt
+  turn: turn.txt
+  
