@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import ast
 import json
 from typing import Generator, Tuple
 
@@ -15,20 +16,63 @@ class SequenceExecutor(BehaviorExecutor):
     timeout = 30.0  # seconds
 
     @staticmethod
-    def iter_atomic_actions(behavior: str) -> Generator:
-        for atomic_action_str in behavior.split("\n"):
-            atomic_action = json.loads(atomic_action_str)
-            name = atomic_action["name"]
-            input = atomic_action.get("input", "")
+    def iter_atomic_actions(behavior: str):
+        """Parse NDJSON (one JSON object per line) into (name, input_str)."""
+        for lineno, line in enumerate(behavior.splitlines(), start=1):
+            s = line.strip()
+            if not s:
+                continue
+            try:
+                atomic_action = json.loads(s)
+            except json.JSONDecodeError as e:
+                # Fallback for single-quoted/python-literal lines (optional)
+                try:
+                    obj = ast.literal_eval(s)
+                    atomic_action = json.loads(json.dumps(obj))
+                    rospy.logwarn(
+                        f"[iter_atomic_actions] Line {lineno}: accepted non-JSON literal; "
+                        "please switch producer to json.dumps."
+                    )
+                except Exception:
+                    snippet_start = max(0, e.pos - 40)
+                    snippet_end = min(len(s), e.pos + 40)
+                    snippet = s[snippet_start:snippet_end]
+                    caret = " " * (e.pos - snippet_start) + "^"
+                    rospy.logerr(
+                        f"[iter_atomic_actions] Invalid JSON at line {lineno}, char {e.pos}:\n"
+                        f"{s}\n{snippet}\n{caret}\nError: {e}"
+                    )
+                    raise
 
-            # Input may be json and then is serialized by
-            # above, but atomic action service expects input
-            # to be a string. Make sure input is a string
-            # before yielding.
-            if not isinstance(input, str):
-                input = json.dumps(input)
+            name = atomic_action.get("name")
+            input_ = atomic_action.get("input", "")
 
-            yield name, input
+            if not isinstance(input_, str):
+                input_ = json.dumps(input_)
+
+            if not name:
+                raise ValueError(f"Line {lineno}: missing 'name'")
+
+            yield name, input_    
+    
+
+
+
+    # @staticmethod
+    # def iter_atomic_actions(behavior: str) -> Generator:
+    #     for atomic_action_str in behavior.split("\n"):
+    #         atomic_action = json.loads(atomic_action_str)
+    #         name = atomic_action["name"]
+    #         input = atomic_action.get("input", "")
+
+    #         # Input may be json and then is serialized by
+    #         # above, but atomic action service expects input
+    #         # to be a string. Make sure input is a string
+    #         # before yielding.
+    #         if not isinstance(input, str):
+    #             input = json.dumps(input)
+
+    #         yield name, input
 
     def wait_for_atomic_action(self, name: str):
         try:

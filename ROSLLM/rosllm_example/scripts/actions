@@ -20,7 +20,9 @@ class Actions:
         msg.linear.y = float(strafe_vel)
         msg.angular.z = float(ang_vel)
         self.pub.publish(msg)
+        rospy.loginfo(f"moving the turtle, {fwd_vel=}, {strafe_vel=}, {ang_vel=}")
         rospy.sleep(1.0)
+
 
     def command_handler(self, req):
         act_input = json.loads(req.input)        
@@ -28,8 +30,6 @@ class Actions:
         return AtomicActionResponse(success=True)
     
     def forward(self, req):
-        print("---here---")
-        print(req)
         vel = json.loads(req.input)['vel']
         self.move(vel, 0.0, 0.0)
         return AtomicActionResponse(success=True)

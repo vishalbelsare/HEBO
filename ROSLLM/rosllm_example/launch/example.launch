@@ -1,16 +1,16 @@
 <launch>
 
-  <!-- args -->
-  <arg name="base_url" default="http://169.254.50.214:8000/v1"/>
-
   <!-- Simulator -->
   <node pkg="turtlesim" name="turtle" type="turtlesim_node"/>
 
   <!-- LLM -->
-  <node pkg="agent_comm" type="llm_node" name="llm">
-    <param name="model" value="deepseek-ai/deepseek-coder-1.3b-base"/>
-    <param name="base_url" value="$(arg base_url)"/>
+  <node pkg="agent_comm" type="fake_llm_node" name="llm">
+    <param name="path" value="$(find rosllm_example)/config/fake_llm_response.txt"/>
   </node>
+  
+  <!-- uncomment the following, comment the fake_llm_node, and setup
+       the llm_node configuration to connect to real LLM -->
+  <!-- <node pkg="agent_comm" type="llm_node" name="llm"/> --> 
 
   <!-- Observations -->
   <node pkg="rosllm_example" name="posetoarray" type="pose_to_array" ns="turtle1"/>
@@ -22,7 +22,7 @@
   </node>
 
   <!-- Actions -->
-  <node pkg="rosllm_example" name="actions" type="actions" output="screen"/>
-  <node pkg="behavior_executor" name="behavior" type="sequence_executor"/>
+  <node pkg="rosllm_example" name="actions" type="actions"/>
+  <node pkg="behavior_executor" name="behavior" type="sequence_executor"/>  
 
 </launch>

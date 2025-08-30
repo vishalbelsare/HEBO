@@ -10,7 +10,10 @@ from rosllm_srvs.srv import (
     ExecuteBehaviorResponse,
     ExecuteBehaviorRequest,
 )
-from rosllm_srvs.srv import LLMSrv, LLMSrvRequest, LLMSrvResponse
+
+from rosllm_srvs.srv import LLM as LLMSrv
+from rosllm_srvs.srv import LLMRequest as LLMSrvRequest
+from rosllm_srvs.srv import LLMResponse as LLMSrvResponse
 
 prompt_template = """You are an agent that selects appropriate actions based on human input and observations from the environment.
 
@@ -28,7 +31,10 @@ This is a list of observations from the environment, you should use this to sele
 This is a list of human inputs, you should use this to select an appropriate action.
 {human_inputs}
 
-# Response format
+{response_format}
+"""
+
+response_format = """# Response format
 Your response should be formatted as follows (ie json lines):
 ```json
 {"name": "...", "input": "..."}
@@ -36,8 +42,7 @@ Your response should be formatted as follows (ie json lines):
 ```
 where "name" is the name of the atomic action you want to execute (from the list above), and "input" is the input to that action as provided in the description.
 If no input is required, you can simply provide an empty string "".
-Notice, you can select a sequence of actions to execute or just a single action - you should choose this based on the environment state and human input.
-"""
+Notice, you can select a sequence of actions to execute or just a single action - you should choose this based on the environment state and human input."""
 
 expert_advice_template = """# Expert advice
 {expert_advice}"""
@@ -62,6 +67,7 @@ class RosAgent:
             human_inputs=human,
             expert_advice=self.expert_advice,
             atomic_action_library=self.atomic_action_library,
+            response_format=response_format,
         )
         req = LLMSrvRequest(prompt=prompt)
         try:
@@ -71,8 +77,9 @@ class RosAgent:
         except rospy.ServiceException as e:
             rospy.logerr(f"Service call failed: {e}")
             return ""       
-        
-        match = re.search(r"```json\s*(\{.*?\})\s*```", resp, re.DOTALL)
+
+        # print(resp)
+        match = re.search(r"```json\s*(\{.*?\})\s*```", resp.response, re.DOTALL)
         if match:
             action = match.group(1)
         else:
@@ -144,13 +151,13 @@ def main():
     rospy.init_node('ros_agent', anonymous=True)
     env = RosEnv()
     agent = RosAgent(env.get_atomic_action_library())
-    obs = agent.get_obs()
+    obs = env.get_obs()
     ret = 0.0
     while not rospy.is_shutdown():
         print("Please enter a command:")
         human = input(">> ")        
         action = agent.get_action(human, obs)
-        obs, reward, done, info = agent.step(action)
+        obs, reward, done, info = env.step(action)
         ret += reward
         rospy.loginfo(f"Action: {action}, Reward: {reward}, Done: {done}, Info: {info}")
         rospy.loginfo(f"Return: {ret}")        
