@@ -4,6 +4,9 @@
   <node pkg="turtlesim" name="turtle" type="turtlesim_node"/>
 
   <!-- LLM -->
+  <!-- NOTE: fake_llm_node can be used if you don't have the ability
+       to host an LLM or don't have a readily available commercial
+       access -->
   <node pkg="agent_comm" type="fake_llm_node" name="llm">
     <param name="path" value="$(find rosllm_example)/config/fake_llm_response.txt"/>
   </node>
