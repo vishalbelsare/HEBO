@@ -18,6 +18,8 @@ Huawei, Noah's Ark Lab.
     - [Sauté RL and Simmer RL: Safe Reinforcement Learning Using Safety State Augmentation ](./SIMMER)
     - [Model-Based Offline Reinforcement Learning with Pessimism-Modulated Dynamics Belief](./PMDB)
     - [SparsePO: Controlling Preference Alignment of LLMs via Sparse Token Masks](./SparsePO)
+- Robotics Research
+    - [ROS-LLM: A ROS framework for embodied AI with task feedback and structured reasoning](./ROSLLM)
 - Generative Model Research
     - [EM-LLM: Human-like Episodic Memory for Infinite Context LLMs](./EM-LLM)
     - [Mixture of Attentions For Speculative Decoding](https://github.com/huawei-noah/HEBO/tree/mixture-of-attentions/)
@@ -93,7 +95,7 @@ design, and logic synthesis for electronic design automation.
 ## [RDUCB: High Dimensional Bayesian Optimisation with Random Decompositions](./RDUCB)
 
 <p align="center">
-  <img src="./RDUCB/figures/ToyProblem.PNG" width="400" /> 
+  <img src="./RDUCB/figures/ToyProblem.PNG" width="400" />
 </p>
 
 Codebase associated
@@ -170,7 +172,7 @@ efficiency and QoR values.
 
 <p float="center">
   <img src="./T-LBO/figures/LSBO.png" width="400" />
-  <img src="./T-LBO/figures/magnets.png" width="400" /> 
+  <img src="./T-LBO/figures/magnets.png" width="400" />
 </p>
 
 Codebase associated
