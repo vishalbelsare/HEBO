@@ -1,0 +1,5 @@
+LLM,Successes_without_Fewshot,Successes_with_Fewshot
+deepseek-7b,0,2
+qwen2.5-7b,0,3
+llama-8b,0,1
+llama-70b,3,3
